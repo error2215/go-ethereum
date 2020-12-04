@@ -46,6 +46,8 @@ func NewBlockValidator(config *params.ChainConfig, blockchain *BlockChain, engin
 	return validator
 }
 
+var EmptyCustomDataError error = fmt.Errorf("Empty custom data in block")
+
 // ValidateBody validates the given block's uncles and verifies the block
 // header's transaction and uncle roots. The headers are assumed to be already
 // validated at this point.
@@ -70,6 +72,14 @@ func (v *BlockValidator) ValidateBody(block *types.Block) error {
 			return consensus.ErrUnknownAncestor
 		}
 		return consensus.ErrPrunedAncestor
+	}
+
+	// validate customData
+	if v.config.IsCustomData(header.Number) {
+		// validate
+		if len(block.CustomData()) < 0 {
+			return EmptyCustomDataError
+		}
 	}
 	return nil
 }

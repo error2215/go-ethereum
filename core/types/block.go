@@ -165,6 +165,10 @@ type Body struct {
 	Uncles       []*Header
 }
 
+type CustomData struct {
+	hashes []string
+}
+
 // Block represents an entire block in the Ethereum blockchain.
 type Block struct {
 	header       *Header
@@ -183,6 +187,8 @@ type Block struct {
 	// inter-peer block relay.
 	ReceivedAt   time.Time
 	ReceivedFrom interface{}
+
+	CD CustomData
 }
 
 // DeprecatedTd is an old relic for extracting the TD of a block. It is in the
@@ -341,6 +347,8 @@ func (b *Block) UncleHash() common.Hash   { return b.header.UncleHash }
 func (b *Block) Extra() []byte            { return common.CopyBytes(b.header.Extra) }
 
 func (b *Block) Header() *Header { return CopyHeader(b.header) }
+
+func (b *Block) CustomData() []string { return b.CD.hashes }
 
 // Body returns the non-header content of the block.
 func (b *Block) Body() *Body { return &Body{b.transactions, b.uncles} }
